@@ -6,9 +6,10 @@
 #include <QPaintEvent>
 #include <QBrush>
 #include <QString>
-#include "forme.h"
 #include <list>
 #include <QPen>
+#include "forme.h"
+#include "site.h"
 //#include <QtQuick>
 
 static const int MAX_PRECISION_SELECTION = 60;
@@ -37,14 +38,18 @@ private:
     ///true si le dessin actuel a été sauvé
     bool sauvegarde;
 
-    QPoint depart;
-    QPoint arrivee;
+    QPointF point1;
+    QPointF point2;
+    QPointF point3;
 
     QPen centerPen, ellipsePen, marquageSelectionPen;
 
     std::list<Forme> listeFormes;
+    std::list<Site> listeSites;
     ///forme temporaire qui est en train d'être dessinée
     QPainterPath tempForme;
+    ///Site temporaire en train d'être desssiné
+    Site tempSite;
 
     QPainterPath marquageSelection;
     Forme * selectionCourante;
@@ -53,12 +58,16 @@ private:
 signals:
 
 public slots:
-    ///Premier clic pour tracer un site
-    void clic1TraitSlot();
-    ///Créer l'ellipse temporaire à tracer lorsque l'on déplace la souris bouton gauche enfoncé
-    void moveEllipseSlot();
-    ///Créer l'ellipse finale lorsque l'on relache la souris
-    void clic2EllipseSlot();
+    ///Premier clic pour placer un site
+    void clicSiteSlot();
+    ///Crée l'ellipse temporaire à tracer lorsque l'on déplace la souris
+    void moveEllipseSlot1();
+    /// Fixe la forme de l'ellipse
+    void relacher1EllipseSlot();
+    /// Change l'angle de l'ellipse
+    void moveEllipseSlot2();
+    /// Fixe l'ellipse correctement orientée
+    void clicFinalEllipseSlot();
 
     ///Clic pour selectionner
     void clic1Selection();

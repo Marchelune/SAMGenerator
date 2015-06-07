@@ -154,9 +154,10 @@ void MainWindow::initStateMachine(){
     etatGlobal->setInitialState(etatEllipse);
 
     //Gestion du tracé d'ellipses
-    QState * clic1Ellipse = new QState(etatEllipse);
-    QState * moveEllipse = new QState(etatEllipse);
-    etatEllipse->setInitialState(clic1Ellipse);
+    QState * etatEllipse1 = new QState(etatEllipse);
+    QState * etatEllipse2 = new QState(etatEllipse);
+    QState * etatEllipse3 = new QState(etatEllipse);
+    etatEllipse->setInitialState(etatEllipse1);
 
     //Gestion de la sélection
     QState * SelectionInit = new QState(etatSelection);
@@ -171,9 +172,11 @@ void MainWindow::initStateMachine(){
 
     etatSelection->addTransition(actionEllipse, SIGNAL(triggered()), etatEllipse);
 
-    addMouseTrans(clic1Ellipse,moveEllipse,this,QEvent::MouseButtonPress,Qt::LeftButton,zone, SLOT(clic1TraitSlot()));
-    addMouseTrans(moveEllipse,moveEllipse,this,QEvent::MouseMove,Qt::NoButton,zone,SLOT(moveEllipseSlot()));
-    addMouseTrans(moveEllipse,clic1Ellipse,this,QEvent::MouseButtonRelease,Qt::LeftButton,zone,SLOT(clic2EllipseSlot()));
+    addMouseTrans(etatEllipse1,etatEllipse2,this,QEvent::MouseButtonPress,Qt::LeftButton,zone, SLOT(clicSiteSlot()));
+    addMouseTrans(etatEllipse2,etatEllipse2,this,QEvent::MouseMove,Qt::NoButton,zone,SLOT(moveEllipseSlot1()));
+    addMouseTrans(etatEllipse2,etatEllipse3,this,QEvent::MouseButtonRelease,Qt::LeftButton,zone,SLOT(relacher1EllipseSlot()));
+    addMouseTrans(etatEllipse3,etatEllipse3,this,QEvent::MouseMove,Qt::NoButton,zone,SLOT(moveEllipseSlot2()));
+    addMouseTrans(etatEllipse3,etatEllipse1,this,QEvent::MouseButtonRelease,Qt::LeftButton,zone,SLOT(clicFinalEllipseSlot()));
 
     etatEllipse->addTransition(actionSelection, SIGNAL(triggered()), etatSelection );
 

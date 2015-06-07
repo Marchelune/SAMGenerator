@@ -29,11 +29,12 @@ ZoneDessin::ZoneDessin(QWidget *parent) :
 
 
 
-    depart = QPoint(0,0);
-    arrivee = QPoint(0,0);
+    point1 = QPoint(0,0);
+    point2 = QPoint(0,0);
     selectionCourante = nullptr;
 
     tempForme = QPainterPath();
+    tempSite = Site();
 
     centerPen = QPen(Qt::black);
     centerPen.setWidth(5);
@@ -56,6 +57,11 @@ ZoneDessin::ZoneDessin(QWidget *parent) :
 void ZoneDessin::paintEvent(QPaintEvent *e){
     QPainter painter(this);
 
+    std::list<Site>::iterator siteIt;
+    for(siteIt = listeSites.begin(); siteIt != listeSites.end(); siteIt++){
+        siteIt->draw(painter, true);
+    }
+
     std::list<Forme>::iterator it;
     for(it = listeFormes.begin(); it != listeFormes.end(); it++){
         painter.setPen(it->getPen());
@@ -64,6 +70,8 @@ void ZoneDessin::paintEvent(QPaintEvent *e){
     //dessine la forme courante
     painter.setPen(ellipsePen);
     painter.drawPath(tempForme);
+    //dessine le site courant
+    tempSite.draw(painter,true);
 
     painter.setPen(marquageSelectionPen);
     marquageSelectionPen.setDashOffset(3.0);
@@ -93,9 +101,9 @@ Forme * ZoneDessin::findAround(QPoint point){
 }
 
 
-void ZoneDessin::clic1TraitSlot(){
-    depart = cursorPos(this);
-    this->setCursor(Qt::CrossCursor);
+void ZoneDessin::clicSiteSlot(){
+    point1 = cursorPos(this);
+
 
     sauvegarde = false;
 
@@ -107,19 +115,39 @@ void ZoneDessin::clic1TraitSlot(){
 }
 
 
-void ZoneDessin::clic2EllipseSlot(){
-    arrivee = cursorPos(this);
-    QPainterPath forme = QPainterPath();
-    forme.addEllipse(QRectF(QRect(depart,arrivee)));
-    listeFormes.push_back(Forme(forme, ellipsePen));
-    tempForme= QPainterPath();
+void ZoneDessin::relacher1EllipseSlot(){
+    tempForme = QPainterPath();
+    point2 = cursorPos(this);
+    tempSite = Site(point1, point2,0);
 
     update();
 }
-void ZoneDessin::moveEllipseSlot(){
-    arrivee = cursorPos(this);
+void ZoneDessin::moveEllipseSlot1(){
+    point2 = cursorPos(this);
     tempForme = QPainterPath();
-    tempForme.addEllipse(QRectF(QRect(depart,arrivee)));
+    tempForme.addEllipse(QRectF(point1, point2));
+
+    update();
+}
+
+void ZoneDessin::moveEllipseSlot2(){
+    point3 = cursorPos(this);
+    QLineF tempLine = QLineF(tempSite.getCentralPoint(),point3);
+    tempForme = QPainterPath();
+    tempForme.moveTo(tempSite.getCentralPoint());
+    tempForme.lineTo(point3);
+    tempSite.setAngle(tempLine.angle());
+    update();
+}
+void ZoneDessin::clicFinalEllipseSlot(){
+    point3 = cursorPos(this);
+    tempForme = QPainterPath();
+    QLineF tempLine = QLineF(tempSite.getCentralPoint(),point3);
+    tempSite.setAngle(tempLine.angle());
+
+    listeSites.push_back(tempSite);
+
+    tempSite = Site();
 
     update();
 }
@@ -181,7 +209,7 @@ void ZoneDessin::openFromFile(QString fileName){
 void ZoneDessin::clic1Selection(){
 
     this->setCursor(Qt::OpenHandCursor);
-    depart = cursorPos(this);
+    point1 = cursorPos(this);
     sauvegarde = false;
     tempForme = QPainterPath();
     selectionCourante = findAround(cursorPos(this));
@@ -192,16 +220,16 @@ void ZoneDessin::clic1Selection(){
 
 void ZoneDessin::moveSelection(){
     this->setCursor(Qt::ClosedHandCursor);
-    arrivee = cursorPos(this);
+    point2 = cursorPos(this);
     if (selectionCourante != nullptr){
 
         QTransform t;
-        t.translate(arrivee.x()-depart.x(), arrivee.y() - depart.y());
+        t.translate(point2.x()-point1.x(), point2.y() - point1.y());
 
         selectionCourante->setForme(t.map(selectionCourante->getForme()));
         marquerSelection();
     }
-    depart = arrivee;
+    point1 = point2;
 
     update();
 }

@@ -12,7 +12,7 @@
  *
  * \brief Classe modélisant une forme graphique quelconque (Ligne, rectangle etc) contenue dans un QPainterPath
  *
- * Permet de manipuler indiférement tout type de forme
+ * Permet de manipuler indifferement tout type de forme
  *
  */
 class Forme
