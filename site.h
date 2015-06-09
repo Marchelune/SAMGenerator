@@ -20,6 +20,7 @@ private:
     QPointF centralPoint;
     QRectF boundingRectEllipse;
     qreal angle;
+    bool isValid;
 };
 
 #endif // SITE_H

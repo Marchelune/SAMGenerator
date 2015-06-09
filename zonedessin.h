@@ -10,6 +10,8 @@
 #include <QPen>
 #include "forme.h"
 #include "site.h"
+#include "voronoidiscretmodule.h"
+
 //#include <QtQuick>
 
 static const int MAX_PRECISION_SELECTION = 60;
@@ -43,6 +45,8 @@ private:
     QPointF point3;
 
     QPen centerPen, ellipsePen, marquageSelectionPen;
+
+    VoronoiDiscretModule vdm;
 
     std::list<Forme> listeFormes;
     std::list<Site> listeSites;

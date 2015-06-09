@@ -49,6 +49,8 @@ ZoneDessin::ZoneDessin(QWidget *parent) :
 
     sauvegarde = true;
 
+    vdm = VoronoiDiscretModule(this->rect());
+
     setMouseTracking(true);
 
 
@@ -57,11 +59,16 @@ ZoneDessin::ZoneDessin(QWidget *parent) :
 void ZoneDessin::paintEvent(QPaintEvent *e){
     QPainter painter(this);
 
+    //dessine le diagramme
+    vdm.draw(&painter);
+
+    //dessine les sites
     std::list<Site>::iterator siteIt;
     for(siteIt = listeSites.begin(); siteIt != listeSites.end(); siteIt++){
         siteIt->draw(painter, true);
     }
 
+    //a supprimer : dessine les formes courantes
     std::list<Forme>::iterator it;
     for(it = listeFormes.begin(); it != listeFormes.end(); it++){
         painter.setPen(it->getPen());
@@ -136,16 +143,17 @@ void ZoneDessin::moveEllipseSlot2(){
     tempForme = QPainterPath();
     tempForme.moveTo(tempSite.getCentralPoint());
     tempForme.lineTo(point3);
-    tempSite.setAngle(tempLine.angle());
+    tempSite.setAngle(- tempLine.angle());
     update();
 }
 void ZoneDessin::clicFinalEllipseSlot(){
     point3 = cursorPos(this);
     tempForme = QPainterPath();
     QLineF tempLine = QLineF(tempSite.getCentralPoint(),point3);
-    tempSite.setAngle(tempLine.angle());
+    tempSite.setAngle(- tempLine.angle());
 
     listeSites.push_back(tempSite);
+    vdm.addSite(tempSite,1);
 
     tempSite = Site();
 
