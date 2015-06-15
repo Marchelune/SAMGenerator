@@ -4,7 +4,7 @@
 #include <QPointF>
 #include <QPainter>
 #include <QRectF>
-
+#include <vector>
 
 class Site
 {
@@ -14,6 +14,7 @@ public:
     inline QPointF getCentralPoint() const {return centralPoint;}
     void draw(QPainter &painter, bool drawEllipse);
     inline void setAngle(qreal _angle) {angle = _angle;}
+    std::vector<QPointF> getPoints(int nmbOfPoints);
 
 
 private:
