@@ -47,10 +47,9 @@ void Site::draw(QPainter & painter, bool drawEllipse){
 std::vector<QPointF> Site::getPoints(int nmbOfPoints){
 
     std::vector<QPointF> points;
-    if(nmbOfPoints <2) {
-        points.push_back(centralPoint);
-        return points;
-    }
+    points.push_back(centralPoint);
+    if(nmbOfPoints <2) return points;
+
 
     qreal a = boundingRectEllipse.width() / (double) 2.0;
     qreal b = boundingRectEllipse.height() / (double) 2.0;
@@ -65,11 +64,10 @@ std::vector<QPointF> Site::getPoints(int nmbOfPoints){
 
     QTransform transform;
     transform.rotate(angle);
-    //transform.translate(centralPoint.x(), centralPoint.y());
 
 
-    unsigned int i = 0;
-    for(i=0; i < points.size(); i++){
+    unsigned int i;
+    for(i=1; i < points.size(); i++){
         points[i] = transform.map(points[i]);
         points[i].setX( points[i].x() + centralPoint.x());
         points[i].setY( points[i].y() + centralPoint.y());

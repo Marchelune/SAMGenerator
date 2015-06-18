@@ -10,6 +10,7 @@
 #include <QPen>
 #include <QRect>
 #include <vector>
+#include <map>
 #include "site.h"
 
 /**
@@ -37,9 +38,9 @@ public:
     void draw(QPainter *painter , QRectF clippingRect);
 
 private:
-
     DT dt2;
-    VD vd2;
+    ///Conserve la correspondance entre les sites principaux (ellipses) et les sites secondaires discrétisés
+    std::map<DT::Vertex_handle , Point_2 > subsites;
     QPen edgesPen = QPen(Qt::black);
 
 };
