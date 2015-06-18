@@ -33,9 +33,12 @@ class VoronoiDiscretModule
 {
 public:
     VoronoiDiscretModule(){};
-    ///ajoute un site au diagramme courant, avec le nombre de points voulus pour le discrétiser.
+    ///ajoute un site au diagramme courant, avec le nombre de points voulus pour le discrétiser (1 par défaut)
     void addSite(Site site, int subDiv =1);
+    ///Dessine le diagramme dans le QPainter. Le diagramme est délimité par le clippingRect.
     void draw(QPainter *painter , QRectF clippingRect);
+    ///Efface le diagramme courant
+    void clear(){dt2.clear();};
 
 private:
     DT dt2;

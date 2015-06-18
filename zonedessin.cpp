@@ -28,6 +28,7 @@ ZoneDessin::ZoneDessin(QWidget *parent) :
     this->show();
 
 
+    nmbSubsites=1;
 
     point1 = QPoint(0,0);
     point2 = QPoint(0,0);
@@ -36,8 +37,6 @@ ZoneDessin::ZoneDessin(QWidget *parent) :
     tempForme = QPainterPath();
     tempSite = Site();
 
-    centerPen = QPen(Qt::black);
-    centerPen.setWidth(5);
     ellipsePen = QPen(Qt::blue);
 
 
@@ -59,6 +58,7 @@ ZoneDessin::ZoneDessin(QWidget *parent) :
 void ZoneDessin::paintEvent(QPaintEvent *e){
     QPainter painter(this);
 
+    painter.setRenderHint(painter.Antialiasing);
     //dessine le diagramme
     vdm.draw(&painter, this->rect());
 
@@ -68,12 +68,6 @@ void ZoneDessin::paintEvent(QPaintEvent *e){
         siteIt->draw(painter, true);
     }
 
-    //a supprimer : dessine les formes courantes
-    std::list<Forme>::iterator it;
-    for(it = listeFormes.begin(); it != listeFormes.end(); it++){
-        painter.setPen(it->getPen());
-        painter.drawPath(it->getForme());
-    }
     //dessine la forme courante
     painter.setPen(ellipsePen);
     painter.drawPath(tempForme);
@@ -89,20 +83,20 @@ void ZoneDessin::paintEvent(QPaintEvent *e){
 
 Forme * ZoneDessin::findAround(QPoint point){
 
-    int tailleZone= 8;
-    QRect rect = QRect();
-    int facteur = 1;
-    while (facteur*tailleZone < MAX_PRECISION_SELECTION ){
-        rect = QRect(point.x() - (int) (facteur*tailleZone) / 2, point.y() - (int) (facteur*tailleZone) / 2,
-                     facteur*tailleZone, facteur*tailleZone );
+//    int tailleZone= 8;
+//    QRect rect = QRect();
+//    int facteur = 1;
+//    while (facteur*tailleZone < MAX_PRECISION_SELECTION ){
+//        rect = QRect(point.x() - (int) (facteur*tailleZone) / 2, point.y() - (int) (facteur*tailleZone) / 2,
+//                     facteur*tailleZone, facteur*tailleZone );
 
-        std::list<Forme>::reverse_iterator it;
-        for(it = listeFormes.rbegin() ; it != listeFormes.rend() ; it++ ){
-            if (it->getForme().intersects(rect)) return &(*it);
-        }
+//        std::list<Forme>::reverse_iterator it;
+//        for(it = listeFormes.rbegin() ; it != listeFormes.rend() ; it++ ){
+//            if (it->getForme().intersects(rect)) return &(*it);
+//        }
 
-        facteur++; //Si on ne trouve rien, on agrandit la zone de recherche avec le facteur
-    }
+//        facteur++; //Si on ne trouve rien, on agrandit la zone de recherche avec le facteur
+//    }
     return nullptr;
 
 }
@@ -153,22 +147,35 @@ void ZoneDessin::clicFinalEllipseSlot(){
     tempSite.setAngle(- tempLine.angle());
 
     listeSites.push_back(tempSite);
-    vdm.addSite(tempSite,4);
+    vdm.addSite(tempSite,nmbSubsites);
 
     tempSite = Site();
 
     update();
 }
 
+void ZoneDessin::recompute(){
+    vdm.clear();
+    std::list<Site>::iterator it;
+    for(it = listeSites.begin() ; it != listeSites.end(); it++){
+        vdm.addSite(*it, nmbSubsites);
+    }
+    update();
+}
+
+void ZoneDessin::changeSubsitesNmbSlot(int n){
+    nmbSubsites = n;
+    recompute();
+}
 
 void ZoneDessin::save(QString fileName){
 
     QFile file(fileName);
     if (file.open((QIODevice::WriteOnly | QIODevice::Text )  )){
         QDataStream stream (&file);
-        stream << qint32(listeFormes.size());
-        std::list<Forme>::const_iterator it;
-        for(it=listeFormes.begin(); it != listeFormes.end();it++){
+        stream << qint32(listeSites.size());
+        std::list<Site>::const_iterator it;
+        for(it=listeSites.begin(); it != listeSites.end();it++){
             it->print(stream);
         }
         file.close();
@@ -177,11 +184,10 @@ void ZoneDessin::save(QString fileName){
 }
 void ZoneDessin::clear(){
     tempForme = QPainterPath();
-    listeFormes.clear();
-
+    listeSites.clear();
+    vdm.clear();
     selectionCourante = nullptr;
     marquageSelection = QPainterPath();
-
     update();
 }
 
@@ -195,17 +201,9 @@ void ZoneDessin::openFromFile(QString fileName){
 
     if ( file.open( QIODevice::ReadOnly ) ){
         stream >> size;
-
         int i;
-        QPainterPath path;
-        QPen pen;
-
         for(i=0; i< size; i++){
-            pen = QPen();
-            path = QPainterPath();
-            stream >> path;
-            stream >> pen;
-            listeFormes.push_back(Forme(path, pen));
+            listeSites.push_back(Site(stream));
         }
         file.close();
     }

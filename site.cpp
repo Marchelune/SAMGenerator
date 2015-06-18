@@ -21,6 +21,22 @@ Site::Site(){
     isValid = false;
 }
 
+Site::Site(QDataStream &stream){
+    centralPoint = QPointF();
+    stream >> centralPoint;
+    boundingRectEllipse = QRectF();
+    stream >> boundingRectEllipse;
+    stream >> angle;
+    stream >> isValid;
+}
+
+void Site::print(QDataStream &stream) const{
+    stream << centralPoint;
+    stream << boundingRectEllipse;
+    stream << angle;
+    stream << isValid;
+}
+
 void Site::draw(QPainter & painter, bool drawEllipse){
 
     if(isValid){
@@ -43,6 +59,8 @@ void Site::draw(QPainter & painter, bool drawEllipse){
     }
 
 }
+
+
 
 std::vector<QPointF> Site::getPoints(int nmbOfPoints){
 

@@ -19,9 +19,6 @@ void VoronoiDiscretModule::addSite(Site site, int subDiv){
         DT::Vertex_handle vh = dt2.insert(cv(qtPoints[i]));
         subsites[vh] = centralPoint;
     }
-
-
-
 }
 
 void VoronoiDiscretModule::draw(QPainter * painter, QRectF clippingRect){

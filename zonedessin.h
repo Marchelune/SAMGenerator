@@ -36,7 +36,9 @@ protected:
 private:
     virtual Forme * findAround(QPoint point);
     virtual void marquerSelection();
-
+    virtual void recompute();
+    ///indique en combien de sites les ellipses doivent être discrétisées.
+    int nmbSubsites;
     ///true si le dessin actuel a été sauvé
     bool sauvegarde;
 
@@ -44,11 +46,10 @@ private:
     QPointF point2;
     QPointF point3;
 
-    QPen centerPen, ellipsePen, marquageSelectionPen;
+    QPen ellipsePen, marquageSelectionPen;
 
     VoronoiDiscretModule vdm;
 
-    std::list<Forme> listeFormes;
     std::list<Site> listeSites;
     ///forme temporaire qui est en train d'être dessinée
     QPainterPath tempForme;
@@ -72,6 +73,9 @@ public slots:
     void moveEllipseSlot2();
     /// Fixe l'ellipse correctement orientée
     void clicFinalEllipseSlot();
+
+
+    void changeSubsitesNmbSlot(int n);
 
     ///Clic pour selectionner
     void clic1Selection();

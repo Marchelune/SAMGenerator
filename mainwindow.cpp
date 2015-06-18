@@ -60,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent) :
     boutonAction->setMenu(choixAction);
     boutonAction->setIcon(QIcon(":/icons/pencil.png"));
     boutonAction->setPopupMode(QToolButton::InstantPopup);
-    boutonAction->setToolTip("Changer la forme du tracé");
-    boutonAction->setStatusTip("Changer la forme du tracé");
+    boutonAction->setToolTip("Placer des site ou sélectionner des sites");
+    boutonAction->setStatusTip("Placer des site ou sélectionner des sites");
 
     //Création de la toolbar ------------------------------------------------------------------------
     QToolBar * toolBar = this->addToolBar( tr("File") );
@@ -73,6 +73,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     zone = new ZoneDessin(this);
     setCentralWidget(zone);
+
+
+    choixDiscretisation = new QSpinBox();
+    choixDiscretisation->setRange(1,128);
+    choixDiscretisation->setValue(1);
+    choixDiscretisation->setSingleStep(5);
+    connect(choixDiscretisation, SIGNAL(valueChanged(int)),zone,SLOT(changeSubsitesNmbSlot(int)));
+    toolBar->addWidget(choixDiscretisation);
 
     //Initialisation de la machine à état ---------------------------------------------------------
     initStateMachine();

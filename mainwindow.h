@@ -7,6 +7,7 @@
 #include <QMenu>
 #include <QStateMachine>
 #include <QState>
+#include <QSpinBox>
 #include "zonedessin.h"
 
 
@@ -33,18 +34,17 @@ private:
     ZoneDessin * zone;
 
 
-    QAction * actionLigne;
-    QAction * actionRect;
     QAction * actionEllipse;
-    QAction * actionPolyligne;
     QAction * actionSelection;
 
     QMenu * choixAction;
+    QSpinBox * choixDiscretisation;
 
     QState * etatGlobal;
     QState * etatEllipse;
     QState * etatSelection;
     QStateMachine * machine;
+
 
 
 
