@@ -60,12 +60,13 @@ void ZoneDessin::paintEvent(QPaintEvent *e){
 
     painter.setRenderHint(painter.Antialiasing);
     //dessine le diagramme
-    vdm.draw(&painter, this->rect());
+    vdm.draw(&painter, this->rect(),vueSousSites, vueBorduresSousSites);
+
 
     //dessine les sites
     std::list<Site>::iterator siteIt;
     for(siteIt = listeSites.begin(); siteIt != listeSites.end(); siteIt++){
-        siteIt->draw(painter, true);
+        siteIt->draw(painter, vueEllipse);
     }
 
     //dessine la forme courante
@@ -83,20 +84,20 @@ void ZoneDessin::paintEvent(QPaintEvent *e){
 
 Forme * ZoneDessin::findAround(QPoint point){
 
-//    int tailleZone= 8;
-//    QRect rect = QRect();
-//    int facteur = 1;
-//    while (facteur*tailleZone < MAX_PRECISION_SELECTION ){
-//        rect = QRect(point.x() - (int) (facteur*tailleZone) / 2, point.y() - (int) (facteur*tailleZone) / 2,
-//                     facteur*tailleZone, facteur*tailleZone );
+    //    int tailleZone= 8;
+    //    QRect rect = QRect();
+    //    int facteur = 1;
+    //    while (facteur*tailleZone < MAX_PRECISION_SELECTION ){
+    //        rect = QRect(point.x() - (int) (facteur*tailleZone) / 2, point.y() - (int) (facteur*tailleZone) / 2,
+    //                     facteur*tailleZone, facteur*tailleZone );
 
-//        std::list<Forme>::reverse_iterator it;
-//        for(it = listeFormes.rbegin() ; it != listeFormes.rend() ; it++ ){
-//            if (it->getForme().intersects(rect)) return &(*it);
-//        }
+    //        std::list<Forme>::reverse_iterator it;
+    //        for(it = listeFormes.rbegin() ; it != listeFormes.rend() ; it++ ){
+    //            if (it->getForme().intersects(rect)) return &(*it);
+    //        }
 
-//        facteur++; //Si on ne trouve rien, on agrandit la zone de recherche avec le facteur
-//    }
+    //        facteur++; //Si on ne trouve rien, on agrandit la zone de recherche avec le facteur
+    //    }
     return nullptr;
 
 }

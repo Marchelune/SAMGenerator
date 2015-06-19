@@ -27,15 +27,20 @@ public:
     ~MainWindow();
 
 private:
-    virtual void createChoixActions();
+    virtual void creerChoixActions();
     virtual void initStateMachine();
     virtual bool abandonner();
+
+
 
     ZoneDessin * zone;
 
 
     QAction * actionEllipse;
     QAction * actionSelection;
+    QAction * actionVueEllipses;
+    QAction * actionVueSousSites;
+    QAction * actionVueBorduresSousSites;
 
     QMenu * choixAction;
     QSpinBox * choixDiscretisation;
@@ -44,6 +49,7 @@ private:
     QState * etatEllipse;
     QState * etatSelection;
     QStateMachine * machine;
+
 
 
 

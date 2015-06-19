@@ -22,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     setStatusBar(statusBar());
+    zone = new ZoneDessin(this);
+    setCentralWidget(zone);
 
     QMenuBar * menuBar = this->menuBar( );
     QMenu * fileMenu = menuBar->addMenu( tr ("&File") );
@@ -55,13 +57,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(quitAction, SIGNAL(triggered( )), this, SLOT(quit( )));
 
     //Création du menu pour dessiner des sites ou sélectioner des sites  -------------------------------------------
-    createChoixActions();
+    creerChoixActions();
     QToolButton * boutonAction = new QToolButton(this);
     boutonAction->setMenu(choixAction);
     boutonAction->setIcon(QIcon(":/icons/pencil.png"));
     boutonAction->setPopupMode(QToolButton::InstantPopup);
     boutonAction->setToolTip("Placer des site ou sélectionner des sites");
     boutonAction->setStatusTip("Placer des site ou sélectionner des sites");
+
+
 
     //Création de la toolbar ------------------------------------------------------------------------
     QToolBar * toolBar = this->addToolBar( tr("File") );
@@ -70,11 +74,13 @@ MainWindow::MainWindow(QWidget *parent) :
     toolBar->addAction(saveAction);
     toolBar->addAction(quitAction);
     toolBar->addWidget(boutonAction);
+    toolBar->addAction(actionVueEllipses);
+    toolBar->addAction(actionVueSousSites);
+    toolBar->addAction(actionVueBorduresSousSites);
 
-    zone = new ZoneDessin(this);
-    setCentralWidget(zone);
 
 
+    //SpinBox nombre de sous-sites
     choixDiscretisation = new QSpinBox();
     choixDiscretisation->setRange(1,128);
     choixDiscretisation->setValue(1);
@@ -91,6 +97,9 @@ MainWindow::~MainWindow()
 {
     //delete ui;
 }
+
+
+
 
 void MainWindow::nouveau()
 {
@@ -129,7 +138,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-void MainWindow::createChoixActions(){
+void MainWindow::creerChoixActions(){
 
     QActionGroup * group = new QActionGroup (this);
 
@@ -147,7 +156,16 @@ void MainWindow::createChoixActions(){
     choixAction->addAction(actionSelection);
     choixAction->addAction(actionEllipse);
 
-
+    actionVueEllipses = new QAction(tr("Afficher Ellipses"),this);
+    actionVueEllipses->setCheckable(true);
+    actionVueEllipses->setChecked(true);
+    actionVueSousSites = new QAction(tr("Afficher Sous-sites"),this);
+    actionVueSousSites->setCheckable(true);
+    actionVueBorduresSousSites = new QAction(tr("Afficher cellules sous-sites"),this);
+    actionVueBorduresSousSites->setCheckable(true);
+    connect(actionVueEllipses, SIGNAL(toggled(bool)),zone,SLOT(vueEllipsesSlot(bool)));
+    connect(actionVueSousSites, SIGNAL(toggled(bool)),zone,SLOT(vueSousSitesSlot(bool)));
+    connect(actionVueBorduresSousSites, SIGNAL(toggled(bool)),zone,SLOT(vueBorduresSousSitesSlot(bool)));
 }
 
 void MainWindow::initStateMachine(){

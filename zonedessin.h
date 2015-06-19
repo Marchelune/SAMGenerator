@@ -36,11 +36,14 @@ protected:
 private:
     virtual Forme * findAround(QPoint point);
     virtual void marquerSelection();
-    virtual void recompute();
+    void recompute();
     ///indique en combien de sites les ellipses doivent être discrétisées.
     int nmbSubsites;
     ///true si le dessin actuel a été sauvé
     bool sauvegarde;
+    bool vueEllipse = true;
+    bool vueSousSites = false;
+    bool vueBorduresSousSites = false;
 
     QPointF point1;
     QPointF point2;
@@ -74,9 +77,10 @@ public slots:
     /// Fixe l'ellipse correctement orientée
     void clicFinalEllipseSlot();
 
-
+    void vueEllipsesSlot(bool b){vueEllipse =b;update();}
+    void vueSousSitesSlot(bool b){vueSousSites = b;update();}
+    void vueBorduresSousSitesSlot(bool b){vueBorduresSousSites = b;update();}
     void changeSubsitesNmbSlot(int n);
-
     ///Clic pour selectionner
     void clic1Selection();
     ///Déplacer la selection
