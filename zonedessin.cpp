@@ -10,7 +10,6 @@
 #include <QPainterPath>
 #include <QFileDialog>
 #include <QTransform>
-#include "forme.h"
 
 
 
@@ -32,7 +31,7 @@ ZoneDessin::ZoneDessin(QWidget *parent) :
 
     point1 = QPoint(0,0);
     point2 = QPoint(0,0);
-    selectionCourante = nullptr;
+
 
     tempForme = QPainterPath();
     tempSite = Site();
@@ -82,25 +81,25 @@ void ZoneDessin::paintEvent(QPaintEvent *e){
 
 }
 
-Forme * ZoneDessin::findAround(QPoint point){
+//Forme * ZoneDessin::findAround(QPoint point){
 
-    //    int tailleZone= 8;
-    //    QRect rect = QRect();
-    //    int facteur = 1;
-    //    while (facteur*tailleZone < MAX_PRECISION_SELECTION ){
-    //        rect = QRect(point.x() - (int) (facteur*tailleZone) / 2, point.y() - (int) (facteur*tailleZone) / 2,
-    //                     facteur*tailleZone, facteur*tailleZone );
+//        int tailleZone= 8;
+//        QRect rect = QRect();
+//        int facteur = 1;
+//        while (facteur*tailleZone < MAX_PRECISION_SELECTION ){
+//            rect = QRect(point.x() - (int) (facteur*tailleZone) / 2, point.y() - (int) (facteur*tailleZone) / 2,
+//                         facteur*tailleZone, facteur*tailleZone );
 
-    //        std::list<Forme>::reverse_iterator it;
-    //        for(it = listeFormes.rbegin() ; it != listeFormes.rend() ; it++ ){
-    //            if (it->getForme().intersects(rect)) return &(*it);
-    //        }
+//            std::list<Forme>::reverse_iterator it;
+//            for(it = listeFormes.rbegin() ; it != listeFormes.rend() ; it++ ){
+//                if (it->getForme().intersects(rect)) return &(*it);
+//            }
 
-    //        facteur++; //Si on ne trouve rien, on agrandit la zone de recherche avec le facteur
-    //    }
-    return nullptr;
+//            facteur++; //Si on ne trouve rien, on agrandit la zone de recherche avec le facteur
+//        }
+//    return nullptr;
 
-}
+//}
 
 
 void ZoneDessin::clicSiteSlot(){
@@ -110,8 +109,8 @@ void ZoneDessin::clicSiteSlot(){
     sauvegarde = false;
 
     //On désactive la sélection
-    selectionCourante = nullptr;
-    marquageSelection = QPainterPath();
+//    selectionCourante = nullptr;
+//    marquageSelection = QPainterPath();
     tempForme = QPainterPath();
 
 }
@@ -148,25 +147,28 @@ void ZoneDessin::clicFinalEllipseSlot(){
     tempSite.setAngle(- tempLine.angle());
 
     listeSites.push_back(tempSite);
-    vdm.addSite(tempSite,nmbSubsites);
+    vdm.addSite(&listeSites.back(),nmbSubsites);
+
 
     tempSite = Site();
 
     update();
 }
-
 void ZoneDessin::recompute(){
     vdm.clear();
-    std::list<Site>::iterator it;
-    for(it = listeSites.begin() ; it != listeSites.end(); it++){
-        vdm.addSite(*it, nmbSubsites);
+    for(auto site : listeSites){
+        vdm.addSite(&site,nmbSubsites);
     }
     update();
+
 }
+
 
 void ZoneDessin::changeSubsitesNmbSlot(int n){
     nmbSubsites = n;
-    recompute();
+//    recompute();
+    vdm.recompute(nmbSubsites);
+    update();
 }
 
 void ZoneDessin::save(QString fileName){
@@ -187,8 +189,8 @@ void ZoneDessin::clear(){
     tempForme = QPainterPath();
     listeSites.clear();
     vdm.clear();
-    selectionCourante = nullptr;
-    marquageSelection = QPainterPath();
+//    selectionCourante = nullptr;
+//    marquageSelection = QPainterPath();
     update();
 }
 
@@ -209,48 +211,52 @@ void ZoneDessin::openFromFile(QString fileName){
         file.close();
     }
 
+    for(auto& site : listeSites){
+        vdm.addSite(&site, nmbSubsites);
+    }
+
     sauvegarde = true;
     update();
 }
 
 void ZoneDessin::clic1Selection(){
 
-    this->setCursor(Qt::OpenHandCursor);
-    point1 = cursorPos(this);
-    sauvegarde = false;
-    tempForme = QPainterPath();
-    selectionCourante = findAround(cursorPos(this));
-    marquerSelection();
-    update();
+//    this->setCursor(Qt::OpenHandCursor);
+//    point1 = cursorPos(this);
+//    sauvegarde = false;
+//    tempForme = QPainterPath();
+//    selectionCourante = findAround(cursorPos(this));
+//    marquerSelection();
+//    update();
 
 }
 
 void ZoneDessin::moveSelection(){
-    this->setCursor(Qt::ClosedHandCursor);
-    point2 = cursorPos(this);
-    if (selectionCourante != nullptr){
+//    this->setCursor(Qt::ClosedHandCursor);
+//    point2 = cursorPos(this);
+//    if (selectionCourante != nullptr){
 
-        QTransform t;
-        t.translate(point2.x()-point1.x(), point2.y() - point1.y());
+//        QTransform t;
+//        t.translate(point2.x()-point1.x(), point2.y() - point1.y());
 
-        selectionCourante->setForme(t.map(selectionCourante->getForme()));
-        marquerSelection();
-    }
-    point1 = point2;
+//        selectionCourante->setForme(t.map(selectionCourante->getForme()));
+//        marquerSelection();
+//    }
+//    point1 = point2;
 
-    update();
+//    update();
 }
 void ZoneDessin::relacherSelection(){
 
-    this->setCursor(Qt::OpenHandCursor);
+    //this->setCursor(Qt::OpenHandCursor);
 
 }
-void ZoneDessin::marquerSelection(){
-    if(selectionCourante != nullptr){
-        marquageSelection = QPainterPath();
-        marquageSelection.addEllipse(selectionCourante->getForme().boundingRect());
+//void ZoneDessin::marquerSelection(){
+//    if(selectionCourante != nullptr){
+//        marquageSelection = QPainterPath();
+//        marquageSelection.addEllipse(selectionCourante->getForme().boundingRect());
 
-    }else{
-        marquageSelection = QPainterPath();
-    }
-}
+//    }else{
+//        marquageSelection = QPainterPath();
+//    }
+//}

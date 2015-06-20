@@ -8,13 +8,8 @@
 #include <QString>
 #include <list>
 #include <QPen>
-#include "forme.h"
 #include "site.h"
 #include "voronoidiscretmodule.h"
-
-//#include <QtQuick>
-
-static const int MAX_PRECISION_SELECTION = 60;
 
 
 
@@ -34,8 +29,8 @@ protected:
 
 
 private:
-    virtual Forme * findAround(QPoint point);
-    virtual void marquerSelection();
+    //virtual Forme * findAround(QPoint point);
+    //virtual void marquerSelection();
     void recompute();
     ///indique en combien de sites les ellipses doivent être discrétisées.
     int nmbSubsites;
@@ -60,7 +55,7 @@ private:
     Site tempSite;
 
     QPainterPath marquageSelection;
-    Forme * selectionCourante;
+    //Forme * selectionCourante;
 
 
 signals:

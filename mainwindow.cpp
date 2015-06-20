@@ -80,11 +80,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-    //SpinBox nombre de sous-sites
+    //SpinBox densité de sous-sites
     choixDiscretisation = new QSpinBox();
     choixDiscretisation->setRange(1,128);
     choixDiscretisation->setValue(1);
     choixDiscretisation->setSingleStep(5);
+    choixDiscretisation->setToolTip(tr("Donner le nombre de sites par unité de longueur"));
+    choixDiscretisation->setStatusTip(tr("Permet de régler la densité de site par unité de longueur"));
     connect(choixDiscretisation, SIGNAL(valueChanged(int)),zone,SLOT(changeSubsitesNmbSlot(int)));
     toolBar->addWidget(choixDiscretisation);
 

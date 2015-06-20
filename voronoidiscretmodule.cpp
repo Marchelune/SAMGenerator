@@ -6,12 +6,20 @@
 
 
 
-void VoronoiDiscretModule::addSite(Site site, int subDiv){
+void VoronoiDiscretModule::addSite(Site* site, int subDiv){
 
     CGAL::Qt::Converter<K> cv;
-    std::vector<Point_2> points;
-    std::vector<QPointF> qtPoints = site.getPoints(subDiv);
-    std::list<DT::Vertex_handle> subsitesList;
+    std::vector<QPointF> qtPoints;
+
+    allSites.push_back(site);
+    if(dt2.number_of_vertices() > 0){
+        meanPoint += site->getCentralPoint();
+        meanPoint /= 2.0;
+        qtPoints = site->getPointsOrientedTo(meanPoint, subDiv);
+    }else{
+        qtPoints = site->getPoints(subDiv);
+        meanPoint = qtPoints[0];
+    }
 
     unsigned int i;
     Point_2 centralPoint = cv(qtPoints[0]);
@@ -21,6 +29,36 @@ void VoronoiDiscretModule::addSite(Site site, int subDiv){
     }
 
     allPoints.insert(allPoints.begin(), qtPoints.begin(), qtPoints.end());
+}
+
+void VoronoiDiscretModule::clear(){
+    dt2.clear();
+    allPoints.clear();
+    subsites.clear();
+    allSites.clear();
+}
+
+void VoronoiDiscretModule::recompute(int subDivDensity){
+    allPoints.clear();
+    subsites.clear();
+    dt2.clear();
+    CGAL::Qt::Converter<K> cv;
+    std::vector<QPointF> qtPoints;
+
+    for(Site* site : allSites){
+        qtPoints.clear();
+        qtPoints = site->getPointsOrientedTo(meanPoint, subDivDensity);
+        unsigned int i;
+
+        Point_2 centralPoint = cv(qtPoints[0]);
+        for (i = 0; i < qtPoints.size() ; i++){
+
+            DT::Vertex_handle vh = dt2.insert(cv(qtPoints[i]));
+            subsites[vh] = centralPoint;
+        }
+        allPoints.insert(allPoints.begin(), qtPoints.begin(), qtPoints.end());
+    }
+
 }
 
 void VoronoiDiscretModule::drawDelaunay(QPainter *painter){
@@ -40,6 +78,11 @@ void VoronoiDiscretModule::drawSubsites(QPainter *painter){
     for(it = allPoints.begin(); it != allPoints.end(); it++){
         painter->drawPoint(*it);
     }
+
+    QPen  temp =  QPen(Qt::green);
+    temp.setWidth(5);
+    painter->setPen(temp);
+    painter->drawPoint(meanPoint);
 }
 
 void VoronoiDiscretModule::draw(QPainter * painter, QRectF clippingRect, bool drawSubsitesBool, bool drawEntireSubsites){
@@ -58,9 +101,9 @@ void VoronoiDiscretModule::draw(QPainter * painter, QRectF clippingRect, bool dr
 
         if(subsites[vs] == subsites[vt] && !drawEntireSubsites) continue;
 
-//        delaunayGraph.insert(std::pair<Point_2,Point_2>(subsites[vs], subsites[vt]));
-//        delaunayGraph[subsites[vs]] = subsites[vt];
-//        std::cout << "On lie " << subsites[vs] << " et " << subsites[vt] << std::endl;
+        //        delaunayGraph.insert(std::pair<Point_2,Point_2>(subsites[vs], subsites[vt]));
+        //        delaunayGraph[subsites[vs]] = subsites[vt];
+        //        std::cout << "On lie " << subsites[vs] << " et " << subsites[vt] << std::endl;
 
         CGAL::Object o = dt2.dual(eit);
         DT::Segment s;

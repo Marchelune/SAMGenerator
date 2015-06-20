@@ -35,13 +35,14 @@ class VoronoiDiscretModule
 public:
     VoronoiDiscretModule(){vertexPen.setWidth(3);};
     ///ajoute un site au diagramme courant, avec le nombre de points voulus pour le discrétiser (1 par défaut)
-    void addSite(Site site, int subDiv =1);
+    void addSite(Site * site, int subDiv =1);
     ///Dessine le diagramme dans le QPainter. Le diagramme est délimité par le clippingRect.
     void draw(QPainter *painter , QRectF clippingRect, bool drawSubsitesBool, bool drawEntireSubsites);
     void drawSubsites(QPainter * painter);
     void drawDelaunay(QPainter *painter);
     ///Efface le diagramme courant
-    void clear(){dt2.clear();allPoints.clear();};
+    void clear();
+    void recompute(int subDivDensity);
 
 private:
     DT dt2;
@@ -49,9 +50,11 @@ private:
     std::map<DT::Vertex_handle , Point_2 > subsites;
     std::set< std::pair<Point_2,Point_2>> delaunayGraph;
     std::list<QPointF> allPoints;
+    std::list<Site*> allSites;
     QPen edgesPen = QPen(Qt::black);
     QPen vertexPen = QPen(Qt::black);
     QPen delaunayPen = QPen(Qt::green);
+    QPointF meanPoint;
 
 };
 
