@@ -12,16 +12,22 @@
 #include "voronoidiscretmodule.h"
 
 
-
+/**
+ * @brief Widget qui permet l'affichage et le tracer du diagramme.
+ * Cette classe reçoit les signaux de tracer (clics de souris divers)
+ */
 class ZoneDessin : public QWidget
 {
     Q_OBJECT
 public:
     explicit ZoneDessin(QWidget *parent = 0);
-
+    ///sauvegarde le diagramme courant
     virtual void save(QString fileName);
+    ///ouvre le diagramme courant depuis un fichier
     virtual void openFromFile(QString fileName);
+    ///créer un nouveau diagramme vide
     virtual void clear();
+    ///@return true si le diagramme a été sauvegardé et non modifié depuis.
     inline bool isSaved() {return sauvegarde;}
 
 protected:
@@ -29,12 +35,15 @@ protected:
 
 
 private:
-    //virtual Forme * findAround(QPoint point);
-    //virtual void marquerSelection();
+    /**
+     * @brief Récupère les segments séparant les cellules des ellipses
+     * @deprecated N'est pas utilisé ici car pas optimal, il faudrait trouver un moyen d'ordonner la liste des arêtes pour ne former qu'un seul polygone tracable par Qt
+     * L'idéal serait de récupérer un QPolygon par cellule que la classe ZoneDessin serait charger de tracer.
+     * Pour l'instant, c'est la classe VoronoiDiscreteModule qui dessine le diagramme.
+     */
     void getDiagramLines();
-    void recompute();
     ///indique en combien de sites les ellipses doivent être discrétisées.
-    int nmbSubsites;
+    int subsitesDensity;
     ///true si le dessin actuel a été sauvé
     bool sauvegarde;
     bool vueEllipse = true;
@@ -84,11 +93,20 @@ public slots:
     void selectSimpleRepartitionSlot();
     void selectSmartRandomizedRepartitionSlot();
 
-    ///Clic pour selectionner
+    /**
+     * @brief slot de sélection
+     * @warning NON FONCTIONNEL
+     */
     void clic1Selection();
-    ///Déplacer la selection
+    /**
+     * @brief slot de dépalcement de la sélection
+     * @warning NON FONCTIONNEL
+     */
     void moveSelection();
-    ///Relacher la selection
+    /**
+     * @brief slot au relachement de la sélection
+     * @warning NON FONCTIONNEL
+     */
     void relacherSelection();
 
 

@@ -11,10 +11,11 @@
 #include "zonedessin.h"
 
 
-//namespace Ui {
-//class MainWindow;
-//}
 
+/**
+ * @brief Classe instanciant la fenêtre principale
+ * @author Rémi Sormain
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -28,6 +29,9 @@ public:
 
 private:
     virtual void creerChoixActions();
+    /**
+     * @brief initStateMachine
+     */
     virtual void initStateMachine();
     virtual bool abandonner();
 

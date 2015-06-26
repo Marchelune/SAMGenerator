@@ -27,7 +27,7 @@ ZoneDessin::ZoneDessin(QWidget *parent) :
     this->show();
 
 
-    nmbSubsites=1;
+    subsitesDensity=1;
 
     point1 = QPoint(0,0);
     point2 = QPoint(0,0);
@@ -79,21 +79,6 @@ void ZoneDessin::paintEvent(QPaintEvent *e){
     painter.setRenderHint(painter.Antialiasing);
     //dessine le diagramme
     vdm.draw(&painter, this->rect(),vueSousSites, vueBorduresSousSites);
-//    for(auto lines : diagramLines){
-//        painter.drawLines(lines);
-//    }
-
-
-//    for(auto cellule : cellules){
-//        painter.drawPolygon(cellule);
-//        QPainterPath path = QPainterPath();
-//        path.addRect(this->rect());
-//        QPainterPath path2 = QPainterPath();
-//        path2.addPolygon(cellule);
-//        path = path.intersected(path2);
-//        painter.fillPath(path,Qt::blue);
-//    }
-
 
     //dessine les sites
     std::list<Site>::iterator siteIt;
@@ -111,41 +96,15 @@ void ZoneDessin::paintEvent(QPaintEvent *e){
     marquageSelectionPen.setDashOffset(3.0);
     painter.drawPath(marquageSelection);
 
-
 }
 
-//Forme * ZoneDessin::findAround(QPoint point){
 
-//        int tailleZone= 8;
-//        QRect rect = QRect();
-//        int facteur = 1;
-//        while (facteur*tailleZone < MAX_PRECISION_SELECTION ){
-//            rect = QRect(point.x() - (int) (facteur*tailleZone) / 2, point.y() - (int) (facteur*tailleZone) / 2,
-//                         facteur*tailleZone, facteur*tailleZone );
-
-//            std::list<Forme>::reverse_iterator it;
-//            for(it = listeFormes.rbegin() ; it != listeFormes.rend() ; it++ ){
-//                if (it->getForme().intersects(rect)) return &(*it);
-//            }
-
-//            facteur++; //Si on ne trouve rien, on agrandit la zone de recherche avec le facteur
-//        }
-//    return nullptr;
-
-//}
 
 
 void ZoneDessin::clicSiteSlot(){
     point1 = cursorPos(this);
-
-
     sauvegarde = false;
-
-    //On désactive la sélection
-//    selectionCourante = nullptr;
-//    marquageSelection = QPainterPath();
     tempForme = QPainterPath();
-
 }
 
 
@@ -178,42 +137,28 @@ void ZoneDessin::clicFinalEllipseSlot(){
     tempForme = QPainterPath();
     QLineF tempLine = QLineF(tempSite.getCentralPoint(),point3);
     tempSite.setAngle(- tempLine.angle());
-
     listeSites.push_back(tempSite);
-    vdm.addSite(&listeSites.back(),nmbSubsites,useSmartDiscretisation);
-    getDiagramLines();
-
+    vdm.addSite(&listeSites.back(),subsitesDensity,useSmartDiscretisation);
     tempSite = Site();
 
     update();
 }
-void ZoneDessin::recompute(){
-    vdm.clear();
-    for(auto site : listeSites){
-        vdm.addSite(&site,nmbSubsites,useSmartDiscretisation);
-    }
-    getDiagramLines();
-    update();
-
-}
-
 
 void ZoneDessin::changeSubsitesDensitySlot(int n){
-    nmbSubsites = n;
-    vdm.recompute(nmbSubsites, useSmartDiscretisation);
-    getDiagramLines();
+    subsitesDensity = n;
+    vdm.recompute(subsitesDensity, useSmartDiscretisation);
     update();
 }
 
 void ZoneDessin::selectSimpleRepartitionSlot(){
     useSmartDiscretisation = false;
-    vdm.recompute(nmbSubsites,useSmartDiscretisation);
+    vdm.recompute(subsitesDensity,useSmartDiscretisation);
     update();
 }
 
 void ZoneDessin::selectSmartRandomizedRepartitionSlot(){
     useSmartDiscretisation = true;
-    vdm.recompute(nmbSubsites,useSmartDiscretisation);
+    vdm.recompute(subsitesDensity,useSmartDiscretisation);
     update();
 }
 
@@ -235,8 +180,6 @@ void ZoneDessin::clear(){
     tempForme = QPainterPath();
     listeSites.clear();
     vdm.clear();
-//    selectionCourante = nullptr;
-//    marquageSelection = QPainterPath();
     update();
 }
 
@@ -258,7 +201,7 @@ void ZoneDessin::openFromFile(QString fileName){
     }
 
     for(auto& site : listeSites){
-        vdm.addSite(&site, nmbSubsites,useSmartDiscretisation);
+        vdm.addSite(&site, subsitesDensity,useSmartDiscretisation);
     }
 
     sauvegarde = true;
@@ -267,42 +210,12 @@ void ZoneDessin::openFromFile(QString fileName){
 
 void ZoneDessin::clic1Selection(){
 
-//    this->setCursor(Qt::OpenHandCursor);
-//    point1 = cursorPos(this);
-//    sauvegarde = false;
-//    tempForme = QPainterPath();
-//    selectionCourante = findAround(cursorPos(this));
-//    marquerSelection();
-//    update();
-
 }
 
 void ZoneDessin::moveSelection(){
-//    this->setCursor(Qt::ClosedHandCursor);
-//    point2 = cursorPos(this);
-//    if (selectionCourante != nullptr){
 
-//        QTransform t;
-//        t.translate(point2.x()-point1.x(), point2.y() - point1.y());
-
-//        selectionCourante->setForme(t.map(selectionCourante->getForme()));
-//        marquerSelection();
-//    }
-//    point1 = point2;
-
-//    update();
 }
 void ZoneDessin::relacherSelection(){
 
-    //this->setCursor(Qt::OpenHandCursor);
-
 }
-//void ZoneDessin::marquerSelection(){
-//    if(selectionCourante != nullptr){
-//        marquageSelection = QPainterPath();
-//        marquageSelection.addEllipse(selectionCourante->getForme().boundingRect());
 
-//    }else{
-//        marquageSelection = QPainterPath();
-//    }
-//}

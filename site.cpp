@@ -85,7 +85,7 @@ void Site::addNeighbors(Site * neighbor, qreal distance){
     neighbors[neighbor] = distance;
 }
 
-std::vector<QPointF> Site::getOrientedRandomPointsTo(QPointF point, int nmbOfPointsPerUnits){
+std::vector<QPointF> Site::getOrientedRandomPointsTo(QPointF point, int nmbOfPointsPerUnits) const{
     if(!isValid) throw std::string("Attention, on tente de récupérer on lance getPointsOrientedTo sur un site non valide");
 
     std::vector<QPointF> points;
@@ -125,7 +125,7 @@ std::vector<QPointF> Site::getOrientedRandomPointsTo(QPointF point, int nmbOfPoi
 
 }
 
-std::vector<QPointF> Site::getPointsOrientedTo(QPointF point, int nmbOfPointsPerUnits){
+std::vector<QPointF> Site::getPointsOrientedTo(QPointF point, int nmbOfPointsPerUnits) const{
     if(!isValid) throw std::string("Attention, on tente de récupérer on lance getPointsOrientedTo sur un site non valide");
 
     std::vector<QPointF> points;
@@ -163,7 +163,7 @@ std::vector<QPointF> Site::getPointsOrientedTo(QPointF point, int nmbOfPointsPer
 
 }
 
-std::vector<QPointF> Site::getPoints(int nmbOfPointsPerUnits){
+std::vector<QPointF> Site::getPoints(int nmbOfPointsPerUnits) const{
 
     std::vector<QPointF> points;
     points.push_back(centralPoint);
