@@ -25,6 +25,7 @@ public:
     inline void setAngle(qreal _angle) {angle = _angle;}
     std::vector<QPointF> getPoints(int nmbOfPointsPerUnits);
     std::vector<QPointF> getPointsOrientedTo(QPointF point, int nmbOfPointsPerUnits);
+    std::vector<QPointF> getOrientedRandomPointsTo(QPointF point, int nmbOfPointsPerUnits);
     virtual void print(QDataStream & stream) const;
 
 

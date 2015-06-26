@@ -9,6 +9,7 @@
 #include <QPainter>
 #include <QPen>
 #include <QRect>
+#include <QVector>
 #include <vector>
 #include <map>
 #include <set>
@@ -35,20 +36,21 @@ class VoronoiDiscretModule
 public:
     VoronoiDiscretModule(){vertexPen.setWidth(3);};
     ///ajoute un site au diagramme courant, avec le nombre de points voulus pour le discrétiser (1 par défaut)
-    void addSite(Site * site, int subDiv =1);
+    void addSite(Site * site, int subDivDensity =1, bool useSmartDiscretisation = false);
     ///Dessine le diagramme dans le QPainter. Le diagramme est délimité par le clippingRect.
     void draw(QPainter *painter , QRectF clippingRect, bool drawSubsitesBool, bool drawEntireSubsites);
     void drawSubsites(QPainter * painter);
     void drawDelaunay(QPainter *painter);
     ///Efface le diagramme courant
     void clear();
-    void recompute(int subDivDensity);
+    void recompute(int subDivDensity, bool useSmartDiscretisation = false);
+    std::map<Site*,QVector<QLineF>> getEdges(QRectF clippingRect);
 
 private:
     DT dt2;
     ///Conserve la correspondance entre les sites principaux (ellipses) et les sites secondaires discrétisés
-    std::map<DT::Vertex_handle , Point_2 > subsites;
-    std::set< std::pair<Point_2,Point_2>> delaunayGraph;
+    std::map<DT::Vertex_handle , Site* > subsites;
+    std::map<Point_2,Point_2> delaunayGraph;
     std::list<QPointF> allPoints;
     std::list<Site*> allSites;
     QPen edgesPen = QPen(Qt::black);

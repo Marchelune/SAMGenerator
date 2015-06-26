@@ -26,30 +26,30 @@ MainWindow::MainWindow(QWidget *parent) :
     setCentralWidget(zone);
 
     QMenuBar * menuBar = this->menuBar( );
-    QMenu * fileMenu = menuBar->addMenu( tr ("&File") );
+    QMenu * fileMenu = menuBar->addMenu( tr ("&Fichier") );
 
-    QAction * newAction = new QAction( QIcon(":icons/new.png"), tr("&New..."), this);
+    QAction * newAction = new QAction( QIcon(":icons/new.png"), tr("&Nouveau..."), this);
     newAction->setShortcut( tr("Ctrl+N")); // accélérateur clavier
     newAction->setToolTip( tr("New file")); // bulle d’aide
     newAction->setStatusTip( tr("New file")); // barre de statut
     fileMenu->addAction(newAction); // rajouter l’action au menu déroulant
     connect(newAction, SIGNAL(triggered( )), this, SLOT(nouveau( ))); // connecter le signal à un slot de this
 
-    QAction * openAction = new QAction( QIcon(":icons/open.png"), tr("&Open..."), this);
+    QAction * openAction = new QAction( QIcon(":icons/open.png"), tr("&Ouvrir..."), this);
     openAction->setShortcut( tr("Ctrl+O")); // accélérateur clavier
     openAction->setToolTip( tr("Open a file")); // bulle d’aide
     openAction->setStatusTip( tr("Open a file")); // barre de statut
     fileMenu->addAction(openAction); // rajouter l’action au menu déroulant
     connect(openAction, SIGNAL(triggered( )), this, SLOT(open( ))); // connecter le signal à un slot de this
 
-    QAction * saveAction = new QAction( QIcon(":icons/save.png"), tr("&Save..."), this);
+    QAction * saveAction = new QAction( QIcon(":icons/save.png"), tr("&Sauver..."), this);
     saveAction->setShortcut( tr("Ctrl+S"));
     saveAction->setToolTip( tr("Save a file"));
     saveAction->setStatusTip( tr("Save a file"));
     fileMenu->addAction(saveAction);
     connect(saveAction, SIGNAL(triggered( )), this, SLOT(save( )));
 
-    QAction * quitAction = new QAction( QIcon(":icons/quit.png"), tr("&Quit..."), this);
+    QAction * quitAction = new QAction( QIcon(":icons/quit.png"), tr("&Quitter..."), this);
     quitAction->setShortcut( tr("Ctrl+Q"));
     quitAction->setToolTip( tr("Quit"));
     quitAction->setStatusTip( tr("Quit"));
@@ -66,9 +66,15 @@ MainWindow::MainWindow(QWidget *parent) :
     boutonAction->setStatusTip("Placer des site ou sélectionner des sites");
 
 
+    //Choix de la façon de répartir les points sur l'ellipse
+    QMenu * algorithmMenu = menuBar->addMenu( tr ("&Algorithme") );
+    algorithmMenu->addAction(actionRepartitionSimple);
+    algorithmMenu->addAction(actionRepartitionAleatoireIntelligente);
+
+
 
     //Création de la toolbar ------------------------------------------------------------------------
-    QToolBar * toolBar = this->addToolBar( tr("File") );
+    QToolBar * toolBar = this->addToolBar( tr("Fichier") );
     toolBar->addAction(newAction);
     toolBar->addAction(openAction);
     toolBar->addAction(saveAction);
@@ -87,7 +93,7 @@ MainWindow::MainWindow(QWidget *parent) :
     choixDiscretisation->setSingleStep(5);
     choixDiscretisation->setToolTip(tr("Donner le nombre de sites par unité de longueur"));
     choixDiscretisation->setStatusTip(tr("Permet de régler la densité de site par unité de longueur"));
-    connect(choixDiscretisation, SIGNAL(valueChanged(int)),zone,SLOT(changeSubsitesNmbSlot(int)));
+    connect(choixDiscretisation, SIGNAL(valueChanged(int)),zone,SLOT(changeSubsitesDensitySlot(int)));
     toolBar->addWidget(choixDiscretisation);
 
     //Initialisation de la machine à état ---------------------------------------------------------
@@ -157,6 +163,16 @@ void MainWindow::creerChoixActions(){
     choixAction = new QMenu(tr("Forme"));
     choixAction->addAction(actionSelection);
     choixAction->addAction(actionEllipse);
+
+    QActionGroup * actionChoixAlgorithme = new QActionGroup(this);
+    actionRepartitionAleatoireIntelligente = actionChoixAlgorithme->addAction(tr("Discrétisation pseudo-intelligente"));
+    actionRepartitionAleatoireIntelligente->setCheckable(true);
+    actionRepartitionSimple = actionChoixAlgorithme->addAction(tr("Discrétisation classique"));
+    actionRepartitionSimple->setCheckable(true);
+    actionRepartitionSimple->setChecked(true);
+    connect(actionRepartitionAleatoireIntelligente,SIGNAL(triggered()),zone, SLOT(selectSmartRandomizedRepartitionSlot()));
+    connect(actionRepartitionSimple,SIGNAL(triggered()),zone, SLOT(selectSimpleRepartitionSlot()));
+
 
     actionVueEllipses = new QAction(tr("Afficher Ellipses"),this);
     actionVueEllipses->setCheckable(true);

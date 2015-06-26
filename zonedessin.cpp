@@ -54,12 +54,45 @@ ZoneDessin::ZoneDessin(QWidget *parent) :
 
 }
 
+void ZoneDessin::getDiagramLines(){
+    diagramLines.clear();
+    std::map<Site*,QVector<QLineF>> result = vdm.getEdges(QRectF(this->rect()));
+
+    for(auto& site : result){
+        diagramLines.push_back(site.second);
+    }
+    QPainterPath path;
+    for(auto lines :diagramLines ){
+        path = QPainterPath();
+        for(auto line : lines){
+            path.moveTo(line.p1());
+            path.lineTo(line.p2());
+        }
+        cellules.push_back(path.toFillPolygon());
+    }
+
+}
+
 void ZoneDessin::paintEvent(QPaintEvent *e){
     QPainter painter(this);
 
     painter.setRenderHint(painter.Antialiasing);
     //dessine le diagramme
     vdm.draw(&painter, this->rect(),vueSousSites, vueBorduresSousSites);
+//    for(auto lines : diagramLines){
+//        painter.drawLines(lines);
+//    }
+
+
+//    for(auto cellule : cellules){
+//        painter.drawPolygon(cellule);
+//        QPainterPath path = QPainterPath();
+//        path.addRect(this->rect());
+//        QPainterPath path2 = QPainterPath();
+//        path2.addPolygon(cellule);
+//        path = path.intersected(path2);
+//        painter.fillPath(path,Qt::blue);
+//    }
 
 
     //dessine les sites
@@ -147,8 +180,8 @@ void ZoneDessin::clicFinalEllipseSlot(){
     tempSite.setAngle(- tempLine.angle());
 
     listeSites.push_back(tempSite);
-    vdm.addSite(&listeSites.back(),nmbSubsites);
-
+    vdm.addSite(&listeSites.back(),nmbSubsites,useSmartDiscretisation);
+    getDiagramLines();
 
     tempSite = Site();
 
@@ -157,17 +190,30 @@ void ZoneDessin::clicFinalEllipseSlot(){
 void ZoneDessin::recompute(){
     vdm.clear();
     for(auto site : listeSites){
-        vdm.addSite(&site,nmbSubsites);
+        vdm.addSite(&site,nmbSubsites,useSmartDiscretisation);
     }
+    getDiagramLines();
     update();
 
 }
 
 
-void ZoneDessin::changeSubsitesNmbSlot(int n){
+void ZoneDessin::changeSubsitesDensitySlot(int n){
     nmbSubsites = n;
-//    recompute();
-    vdm.recompute(nmbSubsites);
+    vdm.recompute(nmbSubsites, useSmartDiscretisation);
+    getDiagramLines();
+    update();
+}
+
+void ZoneDessin::selectSimpleRepartitionSlot(){
+    useSmartDiscretisation = false;
+    vdm.recompute(nmbSubsites,useSmartDiscretisation);
+    update();
+}
+
+void ZoneDessin::selectSmartRandomizedRepartitionSlot(){
+    useSmartDiscretisation = true;
+    vdm.recompute(nmbSubsites,useSmartDiscretisation);
     update();
 }
 
@@ -212,7 +258,7 @@ void ZoneDessin::openFromFile(QString fileName){
     }
 
     for(auto& site : listeSites){
-        vdm.addSite(&site, nmbSubsites);
+        vdm.addSite(&site, nmbSubsites,useSmartDiscretisation);
     }
 
     sauvegarde = true;

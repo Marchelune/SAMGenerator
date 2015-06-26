@@ -41,6 +41,8 @@ private:
     QAction * actionVueEllipses;
     QAction * actionVueSousSites;
     QAction * actionVueBorduresSousSites;
+    QAction * actionRepartitionSimple;
+    QAction * actionRepartitionAleatoireIntelligente;
 
     QMenu * choixAction;
     QSpinBox * choixDiscretisation;
